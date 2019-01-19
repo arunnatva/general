@@ -7,7 +7,7 @@ from flask import send_from_directory
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-class ModelRepoService(Resource):
+class FileUploadService(Resource):
 
 
     def __init__(self):
