@@ -28,10 +28,9 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-api = Api(app,prefix="/mdef/api/v1")
+api = Api(app,prefix="/fileservice")
 
-api.add_resource(ModelRepoService, '/modelrepos', endpoint='modelrepos')
-api.add_resource(ModelExecStatsService, '/modelexecstats', endpoint='modelexecstats')
+api.add_resource(FileUploadService, '/upload', endpoint='upload')
 
 
 if __name__ == '__main__':
