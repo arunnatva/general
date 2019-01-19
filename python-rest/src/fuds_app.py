@@ -10,8 +10,8 @@ from flask_restful import reqparse
 
 from flask_marshmallow import Marshmallow
 
-from model_repo_service import ModelRepoService
-from model_exec_stats_service import ModelExecStatsService
+from file_upload_download import ModelRepoService
+
 
 MODEL_REPO_DIRECTORY = '/home/aknatva/mdef/models'
 
