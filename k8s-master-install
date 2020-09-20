@@ -1,4 +1,3 @@
-oot@c1-master1:/home/ubuntu# cat k8s-install.conf
 #Here, we are going to have a kubernetes cluster with 1 master and 2 nodes. All three VMs should have packages
 
 #Run swap off command:
@@ -56,7 +55,7 @@ wget https://docs.projectcalico.org/v3.10/manifests/calico.yaml
 #And subsequently, the calico and coredns pods won’t be running.
 #
 #Initialize cube admin by running below command
-sudo kubeadm init -—pod-network-cidr=192.168.0.0/16
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 #
 sleep 5
 #
@@ -70,10 +69,12 @@ sleep 5
 
 #Now, copy the kubeadm configuration into user’s home directory
 #
+su - ubuntu
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 #
+ls -l
 #Deploy the resources for pod networking:
 #
 kubectl apply -f rbac-kdd.yaml
@@ -92,3 +93,8 @@ kubectl get pods --all-namespaces
 
 #To get the token, go to the master and run the command on master:
 kubeadm token list
+
+#To get the ca cert hash, run the following command on master:
+# openssl  x509  -pubkey  -in  /etc/kubernetes/pki/ca.crt  | openssl rsa -pubin -outform der 2>/dev/null  | openssl dgst  -sha256  -hex   | sed  ’s/<inverted v>.* //‘
+#
+# sudo kubeadm join 172.31.45.53:6443 --token pf4w1n.xv5kv2mukwqp3qgf  --discovery-token-ca-cert-hash sha256:99bfd54b784cd404218d53b6bd5561107139ddb50ff0a115ffeadd8431b5ce7c
