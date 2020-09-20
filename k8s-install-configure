@@ -1,10 +1,10 @@
-Here, we are going to have a kubernetes cluster with 1 master and 2 nodes. All three VMs should have packages installed for kubernetes components 
+#Here, we are going to have a kubernetes cluster with 1 master and 2 nodes. All three VMs should have packages installed for kubernetes components 
 
-Run swap off command:
+#Run swap off command:
 
-$ swapoff  -a
+swapoff  -a
 
-$ cat /etc/fstab
+cat /etc/fstab
 
 
 Add the GPG key to the apt repository
