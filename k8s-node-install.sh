@@ -1,0 +1,100 @@
+#Here, we are going to have a kubernetes cluster with 1 master and 2 nodes. All three VMs should have packages
+
+#Run swap off command:
+swapoff  -a
+cat /etc/fstab
+#Add the GPG key to the apt repository
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+#
+#Add kubernetes repos to local apt repository:
+sleep 5
+#
+sudo bash -c  'cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF'
+#
+#If above command is difficult to enter, do this:Login as root:
+#
+sleep 5
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
+#
+#Refresh the package list:
+sudo apt-get update
+#
+#check the apt repository for what versions of a package are available:
+apt-cache policy kubelet
+#Now, install all the required packages:
+sudo apt-get install -y docker.io kubelet kubectl kubeadm
+#Enable and start the services:
+#
+sleep 5
+sudo systemctl enable docker.service
+sudo systemctl enable kubelet.service
+#
+sleep 5
+sudo systemctl start docker.service
+sudo systemctl start kubelet.service
+#
+sudo systemctl status docker.service
+sudo systemctl status kubelet.service
+#
+sudo apt-mark hold docker.io kubelet kubectl kubeadm
+#
+#Now, the pod networking configuration should be downloaded from calico website, before initializing the cube admin service:
+#Download the config files rbac-kdd.yaml, calico.yaml files using wget. However, the calico yaml file download from 3.3 version of calico is not compatible with kubernetes 1.19 version.
+#The latest version of calico.yaml v 3.10 is working fine with the K8S v 1.19.
+#
+#wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+#wget https://docs.projectcalico.org/v3.10/manifests/calico.yaml
+#
+#If the 3.3 version of calico.yaml is used, the kubectl apply throws the following error:
+#
+#unable to recognize "calico.yaml": no matches for kind "Deployment" in version "apps/v1beta1"
+#unable to recognize "calico.yaml": no matches for kind "DaemonSet" in version "extensions/v1beta1"
+#
+#And subsequently, the calico and coredns pods won’t be running.
+#
+#Initialize cube admin by running below command
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+#
+sleep 5
+#
+#Above command starts all master K8S serviceS and gives a command to join nodes to the kubernetes cluster:
+#
+#
+#sudo kubeadm join 172.31.34.147:6443 --token ctxnn9.3z3ryykoa81jd3b7 \
+#    --discovery-token-ca-cert-hash sha256:d3f909780537a2c96b525d74b1092e8894fe10a7e87c1866ae6fd3652e72b17e
+
+#sudo kubeadm join 172.31.34.147:6443 --token r8a19y.l4dns5vo5r1lesos --discovery-token-ca-cert-hash sha256:cd3531f024b66d09ca03c4f84ffa1f2fc4b55e2244f37084d9d74aab5ed0f1a2
+
+#Now, copy the kubeadm configuration into user’s home directory
+#
+#su - ubuntu
+#mkdir -p $HOME/.kube
+#sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+#sudo chown $(id -u):$(id -g) $HOME/.kube/config
+#
+ls -l
+#Deploy the resources for pod networking:
+#
+#kubectl apply -f rbac-kdd.yaml
+#kubectl apply -f calico.yaml
+
+#Now, you can list all the PODs of the kubernetes administrative services such as POD neworking, cluster store (etcd), api server etc.,
+#
+#
+kubectl get pods --all-namespaces
+#
+#Once we install kubernetes packages on a couple of nodes, check for the status of docker.service and kubelet.service
+
+#kubelet.service is down by default until we join the node with cluster
+
+#“kubeadm join” command need to be run along with token and ca-cert-hash in order to add the node to cluster
+
+#To get the token, go to the master and run the command on master:
+kubeadm token list
+#
+#To get the ca cert hash, run the following command on master:
+# openssl  x509  -pubkey  -in  /etc/kubernetes/pki/ca.crt  | openssl rsa -pubin -outform der 2>/dev/null  | openssl dgst  -sha256  -hex   | sed  ’s/<inverted v>.* //‘
+#
+# sudo kubeadm join 172.31.45.53:6443 --token pf4w1n.xv5kv2mukwqp3qgf  --discovery-token-ca-cert-hash sha256:99bfd54b784cd404218d53b6bd5561107139ddb50ff0a115ffeadd8431b5ce7c
