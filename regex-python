@@ -1,0 +1,14 @@
+python regex to find a pattern and replace that with another pattern using back references:
+
+import re
+regex = r"\bsampleword\((\S+) as timestamp\)"
+
+test_str = "select col1,col2,col3,sampleword(col4 as timestamp) as col4_1, col5 from table"
+substitute = "from_utc_timestamp(\\1) here \\1 is the back reference that points to the firsrt grouping found in the regular expression
+
+replace logic
+
+re.sub(regex, substitute, test_str, 0, re.MULTILINE | re.IGNORECASE)
+if(result):
+    print(result)
+    
