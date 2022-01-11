@@ -1,5 +1,7 @@
 python regex to find a pattern and replace that with another pattern using back references:
 
+regex101.com is an excellent resource for building, testing regex, and also generate code in many languages
+
 import re
 regex = r"\bsampleword\((\S+) as timestamp\)"
 
