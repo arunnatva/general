@@ -24,3 +24,17 @@ for word in mylist:
     else:
         mydict[word] = mydict[word] + 1
 print(mydict)
+
+
+## python code to print the pairs of elements in a list whose sum is equal to a target number:
+input = [0,1,2,-1,-2,3,4,5,6]
+target = 5
+resultlist = []
+#Output = [1,4],[2,3],[0,5],[-1,6]
+
+for i in input:
+    j = target - i
+    if j in input:
+        resultlist.append(j)
+        if i not in resultlist:
+            print("pair : ", i, j)
