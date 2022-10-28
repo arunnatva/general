@@ -13,3 +13,14 @@ while i < 9:
 print ("total ctr ", ctr)
 
 
+## Given a list of words, print the number of occurrences of each word
+
+mylist = ["arun", "natva", "vaishu", "natva", "samy", "natva", "natva", "vihari"]
+mydict = {}
+for word in mylist:
+    #print(word)
+    if mydict.get(word) is None:
+        mydict[word] = 1
+    else:
+        mydict[word] = mydict[word] + 1
+print(mydict)
